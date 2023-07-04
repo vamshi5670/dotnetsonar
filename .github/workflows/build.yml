@@ -18,15 +18,14 @@ jobs:
         with:
           java-version: 17
           distribution: 'adopt'
-      - name: Set up SonarScanner CLI
-        uses: sonarsource/sonar-scanner-cli-action@v1
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v1
         with:
-          sonar-project-key: dot_net
-          sonar-host-url: ${{ secrets.SONAR_HOST_URL }}
-          sonar-login: ${{ secrets.SONAR_TOKEN }}
-      - name: Build and analyze with dotnet build
+          dotnet-version: '6.0.x'  # Replace with the desired .NET SDK version
+      - name: Analyze with SonarScanner for MSBuild
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
-          cd TaskManagement
-          for project in $(find . -name '*.csproj'); do
-            dotnet build "$project"
-          done
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet sonarscanner begin /k:"dot_net" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+          dotnet build TaskManagement
+          dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
