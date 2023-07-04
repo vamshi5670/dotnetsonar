@@ -44,9 +44,9 @@ jobs:
 
       - name: Build and analyze
         run: |
-          ./.sonar/scanner/dotnet-sonarscanner begin /k:"dot_net" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           cd TaskManagement
           Get-ChildItem -Path . -Filter '*.csproj' -Recurse | ForEach-Object {
             dotnet build $_.FullName
           }
+          ./.sonar/scanner/dotnet-sonarscanner begin /k:"dot_net" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
