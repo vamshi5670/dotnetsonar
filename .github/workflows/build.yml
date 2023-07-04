@@ -27,6 +27,5 @@ jobs:
         run: |
           dotnet tool install --global dotnet-sonarscanner
           dotnet sonarscanner begin /k:"dot_net" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-          cd TaskManagement
-          dotnet build 
+          dotnet build TaskManagement/TaskManagement.csproj
           dotnet sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
