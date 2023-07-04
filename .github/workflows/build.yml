@@ -40,13 +40,13 @@ jobs:
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         run: |
           mkdir -p ./.sonar/scanner
-          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
+          dotnet tool install --global dotnet-sonarscanner --tool-path ./.sonar/scanner
 
       - name: Build and analyze
         run: |
+          ./.sonar/scanner/dotnet-sonarscanner begin /k:"dot_net" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}" /d:sonar.verbose=true
           cd TaskManagement
           Get-ChildItem -Path . -Filter '*.csproj' -Recurse | ForEach-Object {
             dotnet build $_.FullName
           }
-          ./.sonar/scanner/dotnet-sonarscanner begin /k:"dot_net" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="${{ secrets.SONAR_HOST_URL }}"
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
